@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SECURITY VIOLATION DETECTED</title>
+    <style>
+        body { background-color: black; color: #ff3333; font-family: monospace; text-align: center; padding-top: 50px; }
+        .warning { border: 2px solid #ff3333; display: inline-block; padding: 20px; background-color: #1a0000; }
+    </style>
+</head>
+<body>
+    <div class="warning">
+        <h1>UNAUTHORIZED ACCESS DETECTED</h1>
+        <p>Your connection has been flagged for malicious activity.</p>
+        <p>Initiating protocol: <strong>IP_TRACE_LOG_v4.2</strong></p>
+        <hr color="#ff3333">
+        <h3>TARGET METADATA:</h3>
+        <p>IP Address: <span id="user-ip">Querying...</span></p>
+        <p>Location/ISP: <span id="user-isp">Analyzing Node...</span></p>
+        <p>VPN/Proxy Status: <span id="user-vpn">Detecting Tunneling Layers...</span></p>
+    </div>
+
+    <script>
+        // Fetches the attacker's real-time public data to scare them
+        fetch('https://ipapi.co')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('user-ip').innerText = data.ip;
+                document.getElementById('user-isp').innerText = `${data.city}, ${data.region}, ${data.org}`;
+                document.getElementById('user-vpn').innerText = "FLAGGED / ENHANCED TRACE ACTIVE";
+            })
+            .catch(() => {
+                document.getElementById('user-ip').innerText = "CAPTURE FAILURE - DELEGATING TO LOCAL ISP";
+            });
+    </script>
+</body>
+</html>
