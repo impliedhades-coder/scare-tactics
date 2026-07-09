@@ -2,36 +2,171 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SECURITY VIOLATION DETECTED</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRITICAL SECURITY ALERT</title>
     <style>
-        body { background-color: black; color: #ff3333; font-family: monospace; text-align: center; padding-top: 50px; }
-        .warning { border: 2px solid #ff3333; display: inline-block; padding: 20px; background-color: #1a0000; }
+        body {
+            background-color: #050505;
+            color: #ff3333;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .terminal-box {
+            border: 2px solid #ff3333;
+            background-color: #0c0000;
+            padding: 30px;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 0 20px rgba(255, 51, 51, 0.3);
+            border-radius: 5px;
+        }
+        h1 {
+            font-size: 20px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 0;
+            animation: blink 1.5s infinite;
+        }
+        hr {
+            border: 0;
+            border-top: 1px dashed #ff3333;
+            margin: 20px 0;
+        }
+        .log-line {
+            font-size: 14px;
+            line-height: 1.8;
+            min-height: 25px;
+            margin-bottom: 8px;
+            display: none; /* Hidden initially, shown by JS */
+        }
+        .status-searching {
+            color: #ffaa00;
+        }
+        .status-success {
+            color: #00ff00;
+            font-weight: bold;
+        }
+        .status-fail {
+            color: #ff3333;
+            font-weight: bold;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
-    <div class="warning">
-        <h1>UNAUTHORIZED ACCESS DETECTED</h1>
-        <p>Your connection has been flagged for malicious activity.</p>
-        <p>Initiating protocol: <strong>IP_TRACE_LOG_v4.2</strong></p>
-        <hr color="#ff3333">
-        <h3>TARGET METADATA:</h3>
-        <p>IP Address: <span id="user-ip">Querying...</span></p>
-        <p>Location/ISP: <span id="user-isp">Analyzing Node...</span></p>
-        <p>VPN/Proxy Status: <span id="user-vpn">Detecting Tunneling Layers...</span></p>
-    </div>
 
-    <script>
-        // Fetches the attacker's real-time public data to scare them
-        fetch('https://ipapi.co')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('user-ip').innerText = data.ip;
-                document.getElementById('user-isp').innerText = `${data.city}, ${data.region}, ${data.org}`;
-                document.getElementById('user-vpn').innerText = "FLAGGED / ENHANCED TRACE ACTIVE";
-            })
-            .catch(() => {
-                document.getElementById('user-ip').innerText = "CAPTURE FAILURE - DELEGATING TO LOCAL ISP";
-            });
-    </script>
+<div class="terminal-box">
+    <h1>[!] ACCESS DENIED - SECURITY VIOLATION DETECTED [!]</h1>
+    <p style="text-align: center; font-size: 12px; color: #888;">INTERNAL PROTOCOL: HONEYPOT_TRAP_v5.1</p>
+    <hr>
+    
+    <!-- These lines will be revealed and animated sequentially -->
+    <div class="log-line" id="line1">Initializing counter-intelligence script... <span class="status-success">[OK]</span></div>
+    <div class="log-line" id="line2">Interfacing with local ISP gateway... <span class="status-success">[CONNECTED]</span></div>
+    <div class="log-line" id="line3">Querying remote node IP address<span id="dots3" class="status-searching"></span> <span id="res3"></span></div>
+    <div class="log-line" id="line4">Extracting location coordinates<span id="dots4" class="status-searching"></span> <span id="res4"></span></div>
+    <div class="log-line" id="line5">Analyzing routing layers for VPN/Proxy masking<span id="dots5" class="status-searching"></span> <span id="res5"></span></div>
+    <div class="log-line" id="line6">Compiling metadata packet for regional enforcement<span id="dots6" class="status-searching"></span> <span id="res6"></span></div>
+</div>
+
+<script>
+    // Fetch attacker metadata silently in the background right away
+    let targetData = null;
+    fetch('https://ipapi.co')
+        .then(response => response.json())
+        .then(data => { targetData = data; })
+        .catch(() => { targetData = false; });
+
+    // Helper to simulate the looping "dot" search animation
+    function animateDots(elementId, duration) {
+        return new Promise((resolve) => {
+            const el = document.getElementById(elementId);
+            let count = 0;
+            const interval = setInterval(() => {
+                count = (count + 1) % 4;
+                el.innerText = ".".repeat(count);
+            }, 250); // Speed of the dots ticking
+
+            setTimeout(() => {
+                clearInterval(interval);
+                el.innerText = ""; // Clear dots when finished
+                resolve();
+            }, duration);
+        });
+    }
+
+    // Main execution sequence loop
+    async function runTerminal() {
+        // Line 1: Init
+        await new Promise(r => setTimeout(r, 600));
+        document.getElementById('line1').style.display = 'block';
+
+        // Line 2: Interfacing
+        await new Promise(r => setTimeout(r, 800));
+        document.getElementById('line2').style.display = 'block';
+
+        // Line 3: IP Address Lookup
+        await new Promise(r => setTimeout(r, 600));
+        document.getElementById('line3').style.display = 'block';
+        await animateDots('dots3', 1800); // look for 1.8 seconds
+        const res3 = document.getElementById('res3');
+        if (targetData && targetData.ip) {
+            res3.className = 'status-success';
+            res3.innerText = `=> TRACED: ${targetData.ip}`;
+        } else {
+            res3.className = 'status-fail';
+            res3.innerText = '=> OVERRIDE FAILED (IP PROTECTED)';
+        }
+
+        // Line 4: Location Lookup
+        await new Promise(r => setTimeout(r, 800));
+        document.getElementById('line4').style.display = 'block';
+        await animateDots('dots4', 2200);
+        const res4 = document.getElementById('res4');
+        if (targetData && targetData.city) {
+            res4.className = 'status-success';
+            res4.innerText = `=> FOUND: ${targetData.city}, ${targetData.region} (${targetData.org})`;
+        } else {
+            res4.className = 'status-fail';
+            res4.innerText = '=> REFUSED BY TARGET GATEWAY';
+        }
+
+        // Line 5: VPN Detection Simulation
+        await new Promise(r => setTimeout(r, 800));
+        document.getElementById('line5').style.display = 'block';
+        await animateDots('dots5', 2500);
+        const res5 = document.getElementById('res5');
+        // If they successfully fetched data, we drop a spooky flag. If api failed entirely, they might have a heavy adblocker/VPN stopping the script.
+        if (targetData) {
+            res5.className = 'status-success';
+            res5.innerText = '=> VPN DETECTION ACTIVE: PROXY LAYERS STRIPPED';
+        } else {
+            res5.className = 'status-fail';
+            res5.innerText = '=> TARGET IS MASKED (TOR/VPN ANONYMITY HIGH)';
+        }
+
+        // Line 6: Final Warning Wrap-up
+        await new Promise(r => setTimeout(r, 1000));
+        document.getElementById('line6').style.display = 'block';
+        await animateDots('dots6', 1500);
+        const res6 = document.getElementById('res6');
+        res6.className = 'status-fail';
+        res6.innerText = '=> LOGGED. DISCONNECT IMMEDIATELY.';
+    }
+
+    // Boot up the terminal sequence on page load
+    window.onload = runTerminal;
+</script>
+
 </body>
 </html>
